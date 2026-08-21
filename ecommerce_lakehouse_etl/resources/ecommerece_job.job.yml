@@ -1,0 +1,58 @@
+resources:
+  jobs:
+    ecommerece_job:
+      name: ecommerece_job
+      tasks:
+        - task_key: include
+          disabled: false
+          email_notifications: {}
+          notebook_task:
+            notebook_path: ../src/ecommerece_job/bronze/include.ipynb
+            source: WORKSPACE
+          run_if: ALL_SUCCESS
+          timeout_seconds: 0
+          webhook_notifications: {}
+        - task_key: ingestion
+          depends_on:
+            - task_key: include
+          disabled: false
+          email_notifications: {}
+          notebook_task:
+            notebook_path: ../src/ecommerece_job/bronze/ingestion.ipynb
+            source: WORKSPACE
+          run_if: ALL_SUCCESS
+          timeout_seconds: 0
+          webhook_notifications: {}
+        - task_key: silver_cleaning
+          depends_on:
+            - task_key: ingestion
+          disabled: false
+          email_notifications: {}
+          notebook_task:
+            notebook_path: ../src/ecommerece_job/silver/silver_cleaning.ipynb
+            source: WORKSPACE
+          run_if: ALL_SUCCESS
+          timeout_seconds: 0
+          webhook_notifications: {}
+        - task_key: gold_kpis
+          depends_on:
+            - task_key: silver_cleaning
+          disabled: false
+          email_notifications: {}
+          notebook_task:
+            notebook_path: ../src/ecommerece_job/gold/gold_kpis.ipynb
+            source: WORKSPACE
+          run_if: ALL_SUCCESS
+          timeout_seconds: 0
+          webhook_notifications: {}
+      parameters:
+        - name: catalog
+          default: ${var.catalog}
+      email_notifications:
+        no_alert_for_skipped_runs: false
+      max_concurrent_runs: 1
+      performance_target: PERFORMANCE_OPTIMIZED
+      queue:
+        enabled: true
+      timeout_seconds: 0
+      webhook_notifications: {}
