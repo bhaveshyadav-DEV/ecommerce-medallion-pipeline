@@ -16,8 +16,6 @@ artifacts:
 variables:
   catalog:
     description: The catalog to use
-  schema:
-    description: The schema to use
 
 targets:
   dev:
@@ -30,8 +28,18 @@ targets:
     workspace:
       host: https://dbc-0cc14214-f5e5.cloud.databricks.com
     variables:
-      catalog: ecommerce_catalog
-      schema: dev
+      catalog: ecommerce_catalog_dev
+  uat:
+    mode: production
+    workspace:
+      host: https://dbc-0cc14214-f5e5.cloud.databricks.com
+      # We explicitly deploy to /Workspace/Users/bhaveshyadav@cyntexa.com to make sure we only have a single copy.
+      root_path: /Workspace/Users/bhaveshyadav@cyntexa.com/.bundle/${bundle.name}/${bundle.target}
+    variables:
+      catalog: ecommerce_catalog_uat
+    permissions:
+      - user_name: bhaveshyadav@cyntexa.com
+        level: CAN_MANAGE
   prod:
     mode: production
     workspace:
@@ -39,8 +47,7 @@ targets:
       # We explicitly deploy to /Workspace/Users/bhaveshyadav@cyntexa.com to make sure we only have a single copy.
       root_path: /Workspace/Users/bhaveshyadav@cyntexa.com/.bundle/${bundle.name}/${bundle.target}
     variables:
-      catalog: ecommerce_catalog
-      schema: prod
+      catalog: ecommerce_catalog_prod
     permissions:
       - user_name: bhaveshyadav@cyntexa.com
         level: CAN_MANAGE
